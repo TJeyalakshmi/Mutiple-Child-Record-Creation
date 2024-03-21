@@ -1,0 +1,36 @@
+<!-- sldsValidatorIgnore -->
+<template>
+    <template if:false={showRecordCreated}>
+        <lightning-card title="Create Child Record">
+            <div>
+                <lightning-datatable
+                            key-field="id"
+                            data={childRecords}
+                            columns={columns}
+                            onsave={handleDTSave}
+                            hide-checkbox-column="true"
+                            column-widths-mode="auto"
+                    ></lightning-datatable>
+            </div>
+            <lightning-button label="Cancel" variant="neutral" onclick={handleCancel}></lightning-button>
+            <lightning-button label="Add Row" variant="neutral" onclick={handleAddRow}></lightning-button>
+            <lightning-button label="Create Records" variant="neutral" onclick={handleCreate} disabled ={disCreate}></lightning-button>
+        </lightning-card>    
+    </template>
+    <template if:true={showRecordCreated}>
+        <lightning-card title="Records Created">
+            <div style="height: 200px;">
+                <lightning-datatable
+                            key-field="id"
+                            data={savedChildRecords}
+                            columns={columns}
+                            hide-checkbox-column="true"
+                            column-widths-mode="auto"
+                            suppress-bottom-bar="true"
+                    ></lightning-datatable>
+            </div>
+            <lightning-button label="Done" variant="neutral" onclick={handleDone}></lightning-button>
+        </lightning-card>    
+    </template>
+    
+</template>

@@ -1,0 +1,21 @@
+<template>
+    <lightning-card title = "Child Records">
+        <div>
+            <template if:true={isShow}>
+                <lightning-button variant="brand" label="Create Records" onclick={handleClick} class="slds-m-left_x-small"></lightning-button>
+            </template>
+            <template if:false={isShow}>
+                <lightning-combobox
+                    name="Related Object"
+                    label="Related Object"
+                    value={value}
+                    placeholder="Select Object"
+                    options={relObjName}
+                    onchange={handleChange1} >
+                </lightning-combobox>
+                <lightning-button variant="brand" label="Next" onclick={handleNext} class="slds-m-left_x-small"></lightning-button>
+                <lightning-button variant="brand" label="Cancel" onclick={handleCancel} class="slds-m-left_x-small"></lightning-button>
+        </template>
+        </div>
+    </lightning-card>
+</template>
