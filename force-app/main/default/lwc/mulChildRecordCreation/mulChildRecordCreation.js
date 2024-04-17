@@ -6,25 +6,28 @@ import {ShowToastEvent} from 'lightning/platformShowToastEvent';
 
 import getFieldNames from '@salesforce/apex/mulChildRecorCrController.getFieldNames';   
 import createChildRecords from '@salesforce/apex/mulChildRecorCrController.createChildRecords';
+import getChildObjectList from '@salesforce/apex/mulChildRecorCrController.getChildObjectList';
+
 
 import mulChildRecordCreation from './mulChildRecordCreation.html';
 import mulChildRecordCreationA from './mulChildRecordCreationA.html';
-import mulChildRecordCreationB from './mulChildRecordCreationB.html';
+//import mulChildRecordCreationB from './mulChildRecordCreationB.html';
 
 const templateNameA = 'templateA';
-const templateNameB = 'templateB';
+//const templateNameB = 'templateB';
 
 export default class MulChildRecordCreation extends LightningElement {
     //records = records;
     //columns1 = columns1;
     @api objectApiName;
     @api recordId;
+    
     relObj=[];
     relObjName=[];
     isShow=true;
     templateName;
     templateNameA = templateNameA;
-    templateNameB = templateNameB;
+    //templateNameB = templateNameB;
     selObjectName;
     lstFields=[];
     columns=[];
@@ -43,14 +46,14 @@ export default class MulChildRecordCreation extends LightningElement {
             case templateNameA :
                 return mulChildRecordCreationA;
                 
-            case templateNameB :
-                return mulChildRecordCreationB;
+            //case templateNameB :
+            //    return mulChildRecordCreationB;
             
             default:
                 return mulChildRecordCreation;
         }
     }
-
+    /*
     @wire(getObjectInfo, {objectApiName : '$objectApiName'})
     ObjectInfo({error,data}){
         if(data){
@@ -62,19 +65,40 @@ export default class MulChildRecordCreation extends LightningElement {
             console.log('In error :' + JSON.stringify(error));
         }
     }
-    
+    */
+    @wire(getChildObjectList, {parObjectName:'$objectApiName'})
+    ObjectInfo({error,data}){
+        if(data){
+            this.relObj = data;
+            console.log('In relObj :' + JSON.stringify(this.relObj));
+        } else if(error){
+            console.log('In error :' + JSON.stringify(error));
+        }
+    }
+
     handleClick(event){
-        console.log(event);
-        relObjName
+        console.log('In Handle click :' + this.isShow);
+        console.log('this.relObjName :' + this.relObjName );
+        
+        this.getChildObjectNames();
         this.isShow=false;
+        console.log('In Handle click after :' + this.isShow);
     }
 
     getChildObjectNames(){
+        this.relObjName = [];
+        console.log('In getChildObjectNames ' + this.relObjName);
 
+        for (let index = 0; index < this.relObj.length; index++) {
+            this.relObjName.push({label : this.relObj[index], 
+                        value : this.relObj[index]});
+        }
+        /*
         for (let index = 0; index < this.relObj.length; index++) {
             this.relObjName.push({label : Object.values(this.relObj[index])[0], 
                         value : Object.values(this.relObj[index])[0]});
         }
+        */
         console.log('relObjName 11:' + JSON.stringify(this.relObjName));
     }
 
@@ -92,7 +116,7 @@ export default class MulChildRecordCreation extends LightningElement {
     }
 
     handleCancel(){
-        console.log('In Handle Cancel :');
+        console.log('In Handle Cancel :' + this.templateName);
         this.isShow = true;
         this.templateName ='';
     }
@@ -120,7 +144,7 @@ export default class MulChildRecordCreation extends LightningElement {
     getDisplayFields(){
         console.log('objectApiName :' + this.objectApiName);
         console.log('In getDisplayFields :' + this.selObjectName);
-        getFieldNames({objectName : this.selObjectName})
+        getFieldNames({parObjectName:this.objectApiName,objectName : this.selObjectName})
         .then((data)=>{
             this.lstFields = data;
             console.log('lstFields :' + JSON.stringify(this.lstFields));
@@ -184,7 +208,7 @@ export default class MulChildRecordCreation extends LightningElement {
     handleCreate(){
         console.log('In Handle Create');
 
-        createChildRecords({lstChildRecords : this.saveDraftValues, ObjectName : this.selObjectName, parRecordId : this.recordId})
+        createChildRecords({lstChildRecords : this.saveDraftValues, parObjectName: this.objectApiName, ObjectName : this.selObjectName, parRecordId : this.recordId})
         .then(response=>{
             this.savedChildRecords = response;
             console.log('After Apex Call :' + JSON.stringify(this.savedChildRecords));

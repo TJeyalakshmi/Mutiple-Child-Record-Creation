@@ -1,60 +1,112 @@
-import { LightningElement, wire } from 'lwc';
-import getAllObjectName from  '@salesforce/apex/SetUpController.getAllObjectName';
-import { getObjectInfo } from 'lightning/uiObjectInfoApi';
+import { LightningElement, track, wire } from 'lwc';    
 
-export default class SetUpComp extends LightningElement {
+import getAllObjectNames from '@salesforce/apex/AllObjectListController.getAllObjectNames';
+import getChildInfo from '@salesforce/apex/AllObjectListController.getChildInfo';
 
-    selectedObject;
-    relObj;
-    objectOptions = [];
-    relObjName=[];
+import {ShowToastEvent} from 'lightning/platformShowToastEvent';
 
-    @wire(getAllObjectName)
-    objectNames({error, data}) {
-        if(data) {
-            // Process data and populate combobox options
-            this.objectOptions = data.map(objName => ({
-                label: objName,
-                value: objName
-            }));
-        } else if(error) {
-            console.error('Error fetching object names:', error);
-        }
-    }
+export default class setUpComp extends LightningElement {
 
-    @wire(getObjectInfo, {objectApiName : '$selectedObject'})
-    ObjectInfo({error,data}){
+    @track selectedParentObject ='';
+    @track parentNameoptions =[];
+    @track dualoptions = [];
+    @track selectedDualOptions = '';
+    @track selectedChildObject = '';
+    @track showModal = false;
+
+   
+    @wire(getAllObjectNames)   
+    wiredObjectInfo({data, error}){
         if(data){
-            console.log('In Data :' + JSON.stringify(data));
-            console.log('In Data.RELATEDLIST  :' + JSON.stringify(data.childRelationships));
-            console.log('relObjName :' + JSON.stringify(this.relObjName));
-            this.relObj = data.childRelationships;
-        } else if(error){
-            console.log('In error :' + JSON.stringify(error));
+            this.parentNameoptions = data.map(objName=>({
+                                                        label:objName, 
+                                                        value:objName 
+                                                    }));
+            console.log('parentNameoptions[] - ' , this.parentNameoptions);
+        }else if(error){
+            console.log('Error fetching Object Information', error);
         }
     }
 
-    getChildObjectNames(){
 
-        for (let index = 0; index < this.relObj.length; index++) {
-            this.relObjName.push({label : Object.values(this.relObj[index])[0], 
-                        value : Object.values(this.relObj[index])[0]});
-        }
-        console.log('relObjName 11:' + JSON.stringify(this.relObjName));
+    handleComboChange(event){
+        this.selectedParentObject = event.detail.value;     
+        this.loadChildObjects();    
+        console.log('selectedParentObject in Combobox - ' , this.selectedParentObject);    
     }
 
-    handleChange(event) {
-        console.log('Name:' + event.target.name);
-        console.log('Label:' + event.target.label);
-        if(event.target.name == 'objName'){
-            this.selectedObject = event.detail.value;
-            this.getChildObjectNames();
+
+    loadChildObjects(){
+        if(this.selectedParentObject){
+            getChildInfo({parentObjectApiName: this.selectedParentObject})
+            .then(result =>{
+                console.log('Result - ' + result);
+
+                this.dualoptions = result.map(childName=>({
+                                                        label: childName, 
+                                                        value:childName
+                                                        }));
+                console.log('dualoptions[] - ' + this.dualoptions);
+            })
+            .catch(error => {
+                console.error('Error fetching child objects', error);
+            });
         }
-        
-        if(event.target.name == 'Related Object'){
-            
-        }
-        
+    } 
+
+
+    handleDualChange(event){
+       this.selectedChildObject = event.detail.value;
+       this.selectedChildObjects = event.detail.value;
+        console.log('selectedChildObjects  - ', this.selectedChildObjects);
     }
 
+    CreateFieldSets(){
+        createFieldSets({ parObjectName: this.selectedParentObject, childObjects: this.selectedChildObjects})
+        .then(result => {
+            console.log('Field set created:', result);
+            let messageResult = result;
+            this.dispatchEvent(
+                new ShowToastEvent({
+                    title: 'Success',
+                    message: JSON.stringify(messageResult),
+                    variant: 'success',
+                }),
+            );
+            this.dispatchEvent(new CustomEvent('modalsuccess'));
+        })
+        .catch(error => {
+            console.error('Error creating field set:', JSON.stringify(error));
+            this.dispatchEvent(
+                new ShowToastEvent({
+                    title: 'Error',
+                    message: JSON.stringify(error),
+                    variant: 'error',
+                }),
+            );
+        });
+    }
+
+    handleCancel(){
+        this.selectedParentObject = '';
+        this.selectedDualOptions = '';
+        this.selectedChildObject = '';
+        this.selectedChildObjects = '';
+        this.dualoptions = '';
+    }
+
+    handleNext(){
+        this.showModal = true;
+    }
+
+    handleModalCancel(){
+        this.showModal = false;
+    }
+
+    handleModalSucess(){
+        this.showModal=false;
+        this.selectedDualOptions = '';
+        this.selectedChildObject = '';
+        this.selectedChildObjects = '';
+    }
 }

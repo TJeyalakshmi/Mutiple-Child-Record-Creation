@@ -1,27 +1,46 @@
 <template>
-    <lightning-card title="Set Up">
-        <p> Select an Object </p>
-        <lightning-combobox
-            name="objName"
-            label="Object Name"
-            value=""
-            placeholder="Select Object"
-            options={objectOptions}
-            onchange={handleChange}
-            required
-    ></lightning-combobox>
-    <p>Selected Object is: {selectedObject}</p>
+    <lightning-card title="Value Selector">
+        <div style="padding-left: 30px;">
+            <!-- All Parent Object Combo Box -->
+            <div class="slds-size_medium">
+                <lightning-combobox name="Parent Object"
+                                    label="Select Parent Object"
+                                    value={selectedParentObject}
+                                    placeholder="Select Object"
+                                    options={parentNameoptions}
+                                    onchange={handleComboChange} ></lightning-combobox>
+            </div>
 
-    <lightning-combobox
-                    name="Related Object"
-                    label="Related Object"
-                    value={value}
-                    placeholder="Select Object"
-                    options={relObjName}
-                    onchange={handleChange} >
-                </lightning-combobox>
-    <lightning-button variant="brand" label="Next" onclick={handleNext} class="slds-m-left_x-small"></lightning-button>
-    <lightning-button variant="brand" label="Cancel" onclick={handleCancel} class="slds-m-left_x-small"></lightning-button>
+            <!-- All Child Object based on the selected Parent --> 
+            <lightning-combobox name="Child Object"
+                                    label="Select Child Object"
+                                    value={selectedChildObject}
+                                    placeholder="Select Object"
+                                    options={dualoptions}
+                                    onchange={handleDualChange} ></lightning-combobox>
+            
+            <!-- Footer Buttons -->
+            <footer class="slds-card__footer">
+                <lightning-button variant="neutral" 
+                                  label="Cancel" 
+                                  onclick={handleCancel} 
+                                  class="slds-m-left_x-small"></lightning-button>
+                                  
+                <lightning-button variant="brand" 
+                                  label="Next" 
+                                  onclick={handleNext} 
+                                  class="slds-m-left_x-small"></lightning-button>
+                <template if:true={showModal}>
+                <c-modal-set-up-comp      
+                                  selected-parent-object ={selectedParentObject}
+                                  selected-child-object ={selectedChildObject}          
+                                  onmodalcancel={handleModalCancel}
+                                  onmodalsuccess={handleModalSucess}>
+                </c-modal-set-up-comp>
+                
+                
+            </template>
+            </footer>     
+        </div>
     </lightning-card>
-    
 </template>
