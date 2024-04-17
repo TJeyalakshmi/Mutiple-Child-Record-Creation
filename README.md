@@ -1,18 +1,21 @@
-# Salesforce DX Project: Next Steps
+# App Details
 
-Now that you’ve created a Salesforce DX project, what’s next? Here are some documentation resources to get you started.
+Multiple-Child-Record-Creation.
+In Salesforce, child record can be created from a parent record using various methods depending on the requirements and the relationship between the parent and child objects. Using the Salesforce Standart UI, only one record of the related child  object can be created from a parent record page.
 
-## How Do You Plan to Deploy Your Changes?
+This component has a feature to create multiple child records on a single click of a button from the parent record page.
 
-Do you want to deploy a set of changes, or create a self-contained application? Choose a [development model](https://developer.salesforce.com/tools/vscode/en/user-guide/development-models).
+Platform - Salesforce Lightning Platform
+Framework - LWC
+Available for - Lightning Record Page
 
-## Configure Your Salesforce DX Project
+# Features
+This component can be placed in any record page of an object in Salesforce. It is designed to capture multiple child record values and create all the records on single click.
 
-The `sfdx-project.json` file contains useful configuration information for your project. See [Salesforce DX Project Configuration](https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_ws_config.htm) in the _Salesforce DX Developer Guide_ for details about this file.
+# Component Screenshot
+<<Image of the comp and its mapping>>
 
-## Read All About It
+# URL - Install the app - 
+URL: <<https://login.salesforce.com/packaging/installPackage.apexp??????>>
 
-- [Salesforce Extensions Documentation](https://developer.salesforce.com/tools/vscode/)
-- [Salesforce CLI Setup Guide](https://developer.salesforce.com/docs/atlas.en-us.sfdx_setup.meta/sfdx_setup/sfdx_setup_intro.htm)
-- [Salesforce DX Developer Guide](https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_intro.htm)
-- [Salesforce CLI Command Reference](https://developer.salesforce.com/docs/atlas.en-us.sfdx_cli_reference.meta/sfdx_cli_reference/cli_reference.htm)
+# Initial Set Up:
